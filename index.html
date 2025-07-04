@@ -19,11 +19,15 @@
         fetch(`https://proxycheck.io/v2/${ip}?key=${proxyCheckAPIKey}&vpn=1&asn=1&risk=1`)
           .then(res => res.json())
           .then(proxyData => {
+            if (proxyData.status === "error") {
+              throw new Error(proxyData.message || "Unknown ProxyCheck error");
+            }
+
             const ipInfo = proxyData[ip];
             if (!ipInfo) {
-              showAccessDenied("Could not verify proxy status.");
-              return;
+              throw new Error("No data for IP");
             }
+
             if (ipInfo.proxy === "yes") {
               showAccessDenied("Access Denied: VPN or Proxy detected.");
               return;
