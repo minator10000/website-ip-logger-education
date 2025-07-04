@@ -8,36 +8,29 @@
   <p>Your visit has been logged (if not using VPN/proxy).</p>
 
   <script>
-    const webhookURL = "https://discord.com/api/webhooks/1389939874454442044/xzwnU8-Y6OmJzrBIPkApuOjRPEq1uURdEQcWcJS-tTlxRpxRJTEq4VlxmSP-XI0aYRFW"; // Replace with your Discord webhook
+    const webhookURL = "YOUR_DISCORD_WEBHOOK_URL_HERE"; // Replace with your webhook
     const proxyCheckAPIKey = "7738y5-n443d7-p72755-811973";
 
-    // Step 1: Get visitor IP info from ipapi.co
-    fetch("https://ipapi.co/json/")
+    fetch("https://ipinfo.io/json")
       .then(res => res.json())
       .then(ipData => {
         const ip = ipData.ip;
 
-        // Step 2: Check if IP is VPN/proxy with proxycheck.io
         fetch(`https://proxycheck.io/v2/${ip}?key=${proxyCheckAPIKey}&vpn=1&asn=1&risk=1`)
           .then(res => res.json())
           .then(proxyData => {
-            // proxycheck.io returns IP as the key, so grab the data for this IP
             const ipInfo = proxyData[ip];
-
             if (!ipInfo) {
               showAccessDenied("Could not verify proxy status.");
               return;
             }
-
-            // proxycheck returns "proxy": "yes" or "no"
             if (ipInfo.proxy === "yes") {
               showAccessDenied("Access Denied: VPN or Proxy detected.");
               return;
             }
 
-            // Not a proxy/VPN, send data to Discord
             const message = {
-              content: `🔍 New Visitor Logged:\nIP: ${ipData.ip}\nCity: ${ipData.city}\nRegion: ${ipData.region}\nCountry: ${ipData.country_name}\nISP: ${ipData.org}`
+              content: `🔍 New Visitor Logged:\nIP: ${ip}\nCity: ${ipData.city}\nRegion: ${ipData.region}\nCountry: ${ipData.country}\nISP: ${ipInfo.asn_org || "Unknown"}`
             };
 
             fetch(webhookURL, {
@@ -52,7 +45,7 @@
           });
       })
       .catch(err => {
-        console.error("IP API error:", err);
+        console.error("IP info error:", err);
         showAccessDenied("Error fetching IP info.");
       });
 
