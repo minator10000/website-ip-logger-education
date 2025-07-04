@@ -1,61 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Visitor Logger with ProxyCheck</title>
+  <title>Visitor Info Logger</title>
 </head>
 <body>
   <h2>Welcome!</h2>
-  <p>Your visit has been logged (if not using VPN/proxy).</p>
+  <p>Please enter your name:</p>
+  <input type="text" id="nameInput" placeholder="Your name" />
+  <button id="submitBtn">Submit</button>
+
+  <p id="status"></p>
 
   <script>
-    const webhookURL = "YOUR_DISCORD_WEBHOOK_URL_HERE"; // Replace with your webhook
-    const proxyCheckAPIKey = "7738y5-n443d7-p72755-811973";
+    const webhookURL = "YOUR_DISCORD_WEBHOOK_URL_HERE"; // Replace with your Discord webhook
 
-    fetch("https://ipinfo.io/json")
-      .then(res => res.json())
-      .then(ipData => {
-        const ip = ipData.ip;
+    document.getElementById("submitBtn").addEventListener("click", () => {
+      const name = document.getElementById("nameInput").value.trim();
+      if (!name) {
+        alert("Please enter your name!");
+        return;
+      }
 
-        fetch(`https://proxycheck.io/v2/${ip}?key=${proxyCheckAPIKey}&vpn=1&asn=1&risk=1`)
-          .then(res => res.json())
-          .then(proxyData => {
-            if (proxyData.status === "error") {
-              throw new Error(proxyData.message || "Unknown ProxyCheck error");
-            }
+      document.getElementById("status").textContent = "Fetching your IP info...";
 
-            const ipInfo = proxyData[ip];
-            if (!ipInfo) {
-              throw new Error("No data for IP");
-            }
+      fetch("https://ipinfo.io/json")
+        .then(res => res.json())
+        .then(ipData => {
+          const message = {
+            content: `👤 Visitor Name: **${name}**\n🌐 IP: ${ipData.ip}\n🏙️ City: ${ipData.city}\n🌍 Region: ${ipData.region}\n🇺🇸 Country: ${ipData.country}`
+          };
 
-            if (ipInfo.proxy === "yes") {
-              showAccessDenied("Access Denied: VPN or Proxy detected.");
-              return;
-            }
-
-            const message = {
-              content: `🔍 New Visitor Logged:\nIP: ${ip}\nCity: ${ipData.city}\nRegion: ${ipData.region}\nCountry: ${ipData.country}\nISP: ${ipInfo.asn_org || "Unknown"}`
-            };
-
-            fetch(webhookURL, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(message)
-            }).catch(console.error);
-          })
-          .catch(err => {
-            console.error("ProxyCheck API error:", err);
-            showAccessDenied("Error verifying proxy status.");
+          fetch(webhookURL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(message)
+          }).then(() => {
+            document.getElementById("status").textContent = "Thank you! Your info was sent.";
+          }).catch(err => {
+            document.getElementById("status").textContent = "Error sending info.";
+            console.error("Discord webhook error:", err);
           });
-      })
-      .catch(err => {
-        console.error("IP info error:", err);
-        showAccessDenied("Error fetching IP info.");
-      });
-
-    function showAccessDenied(msg) {
-      document.body.innerHTML = `<h2 style="color: red;">${msg}</h2>`;
-    }
+        })
+        .catch(err => {
+          document.getElementById("status").textContent = "Error fetching IP info.";
+          console.error("IP info error:", err);
+        });
+    });
   </script>
 </body>
 </html>
